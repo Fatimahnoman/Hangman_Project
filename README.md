@@ -1,137 +1,42 @@
-🎮 Hangman Game (Console-Based)
-
-A classic Hangman Game built using Python, where the player tries to guess a hidden word one letter at a time before running out of attempts.
-
-📌 Features
-
-🎯 Random word selection
-
-🔤 Letter-by-letter guessing
-
-❌ Limited number of incorrect guesses
-
-📊 Display of guessed letters
-
-🧠 Input validation
-
-🏆 Win / Lose conditions
-
-🎨 Optional ASCII Hangman visuals
-
-🛠️ Technologies Used
-
-Python 3
-
-Built-in modules:
-
-random
-
-📂 Project Structure
-hangman-game/
-│
-├── app.py        # Game logic
-├── README.md      # Documentation
-
-⚙️ Requirements
-
-Before running this project, make sure you have:
-
-Python 3 installed
-👉 https://www.python.org/downloads/
-
-Check installation:
-
-python --version
-
-🚀 How to Run the Game
-
-Clone the repository:
-
-git clone https://github.com/your-username/hangman-game.git
-
-
-Navigate to the project folder:
-
-cd hangman-game
-
-
-Run the game:
-
-python main.py
-
-🎮 How to Play
-
-The computer randomly selects a hidden word
-
-You guess one letter at a time
-
-If the letter is correct → it is revealed in the word
-
-If the letter is wrong → you lose one life
-
-You have limited attempts to guess the word
-
-The game ends when:
-
-You guess the word correctly 🎉
-
-Or you run out of attempts 😢
-
-💡 Example Gameplay
-Word: _ _ _ _
-
-Guess a letter: a
-Correct!
-
-Word: a _ _ _
-
-Guess a letter: z
-Wrong! Attempts left: 5
-
-Word: a _ _ _
-
-⚠️ Rules
-
-Only single letters are allowed
-
-Repeated guesses are not counted
-
-Invalid inputs will be rejected
-
-🎯 Game Logic
-
-Random word is selected from a list
-
-A loop runs until the game ends
-
-Correct guesses update the word display
-
-Incorrect guesses reduce attempts
-
-Win when all letters are guessed
-
-🔄 Future Improvements
-
-Difficulty levels (easy / medium / hard)
-
-GUI version using Streamlit / Tkinter
-
-Score tracking system
-
-Categories (animals, fruits, countries, etc.)
-
-Multiplayer mode
-
-👩‍💻 Author: Fatimah Noman
-
-Python Learner 🚀
-
-Exploring Agentic AI 🤖
-
-⭐ Support
-
-If you like this project, give it a ⭐ on GitHub!
-
-📜 License
-
-This project is open-source and free to use.
+# Modern Hangman Game - Python & Pygame
+
+A sleek, modern, and interactive **Hangman Game** built with Python and Pygame. This project has been upgraded from a simple CLI tool to a fully functional **Graphical User Interface (GUI)** version that is mobile-responsive and web-ready.
+
+## 🌟 Features
+- **Modern UI**: Clean and professional aesthetics with a Bootstrap-inspired color palette.
+- **Virtual Keyboard**: On-screen A-Z buttons for easy play on mobile devices and touchscreens.
+- **Dynamic Graphics**: Interactive hangman drawing that builds piece-by-piece.
+- **Web-Ready**: Optimized for deployment on GitHub Pages using `pygbag`.
+- **Responsive Design**: Works smoothly on both desktop and mobile browsers.
+- **Simple & Fun**: A straightforward "Simple UI Game" perfect for quick entertainment.
+
+## 🎮 How to Play
+1.  **Objective**: Guess the hidden word one letter at a time before the hangman is fully drawn.
+2.  **Input**: Use your **physical keyboard** (Desktop) or click/tap the **virtual keyboard** (Mobile).
+3.  **Lives**: You start with 7 lives. Each incorrect guess removes one life.
+4.  **Restart**: Once the game ends (Win or Loss), simply click the **RESTART** button or press 'R' to play again with a new word.
+
+## 🛠️ Installation & Local Run
+To run the game on your local machine:
+
+1.  **Clone the repository**:
+    ```bash
+    git clone https://github.com/Fatimahnoman/Hangman_Project.git
+    cd Hangman_Project
+    ```
+2.  **Install dependencies**:
+    ```bash
+    pip install pygame
+    ```
+3.  **Run the game**:
+    ```bash
+    python main.py
+    ```
+
+## 🌐 Web Deployment
+This game is compiled into WebAssembly using `pygbag`. To host it on GitHub Pages:
+1.  Run `python -m pygbag --build .`
+2.  The resulting `index.html` and assets in the root directory are automatically served by GitHub Pages.
+
+---
+*Created as part of my Software Development Portfolio.*
