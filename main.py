@@ -6,28 +6,28 @@ import asyncio
 # Initialize Pygame
 pygame.init()
 
-# Constants & Colors
+# Constants & Colors (Matched to Reference Aesthetic)
 WIDTH, HEIGHT = 800, 600
-WHITE = (248, 249, 250)
-BLACK = (33, 37, 41)
-RED = (220, 53, 69)
-BLUE = (0, 123, 255)
-GREEN = (40, 167, 69)
-ORANGE = (253, 126, 20)
-GRAY = (206, 212, 218)
+BG_COLOR = (28, 28, 57)  # Deep Dark Blue/Purple
+TEXT_WHITE = (255, 255, 255)
+ACCENT_COLOR = (0, 210, 255) # Cyan/Neon Blue
+BUTTON_COLOR = (45, 45, 85) # Slightly lighter than BG
+BUTTON_HOVER = (65, 65, 125)
+RED_ACCENT = (255, 82, 82)
+GREEN_ACCENT = (105, 240, 174)
 
 # Screen setup
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Modern Hangman - Portfolio Edition")
+pygame.display.set_caption("Neon Hangman - Modern UI")
 
-# Fonts (Using default as fallback, but bold for better UI)
+# Fonts
 def get_font(size):
-    return pygame.font.SysFont("arial", size, bold=True)
+    return pygame.font.SysFont("consolas", size, bold=True)
 
-TITLE_FONT = get_font(70)
-WORD_FONT = get_font(50)
-UI_FONT = get_font(30)
-KEY_FONT = get_font(25)
+TITLE_FONT = get_font(80)
+WORD_FONT = get_font(60)
+UI_FONT = get_font(28)
+KEY_FONT = get_font(22)
 
 # Game Data
 WORDS = ["UMBRELLA", "COMPUTER", "SMARTPHONE", "TELESCOPE", "DEVELOPER", "PYTHON", "PROGRAMMING"]
@@ -35,49 +35,56 @@ WORDS = ["UMBRELLA", "COMPUTER", "SMARTPHONE", "TELESCOPE", "DEVELOPER", "PYTHON
 def get_word():
     return random.choice(WORDS).upper()
 
-def draw_hangman_modern(chances):
-    # Base/Gallows with smoother colors
-    pygame.draw.rect(screen, BLACK, (50, 500, 200, 10), border_radius=5) # Base
-    pygame.draw.rect(screen, BLACK, (145, 100, 10, 400)) # Pole
-    pygame.draw.rect(screen, BLACK, (145, 100, 200, 10)) # Top Bar
-    pygame.draw.rect(screen, BLACK, (340, 100, 5, 50)) # Rope
+def draw_hangman_styled(chances):
+    # Modern Styled Hangman (Neon White Lines)
+    color = TEXT_WHITE
+    thickness = 6
+    
+    # Gallows
+    pygame.draw.line(screen, color, (80, 480), (220, 480), thickness) # Base
+    pygame.draw.line(screen, color, (150, 480), (150, 120), thickness) # Pole
+    pygame.draw.line(screen, color, (150, 120), (320, 120), thickness) # Top Bar
+    pygame.draw.line(screen, color, (320, 120), (320, 160), thickness) # Rope
 
-    # Modern Character Parts
-    color = BLACK
+    # Character
     if chances <= 6: # Head
-        pygame.draw.circle(screen, color, (342, 190), 40, 5)
+        pygame.draw.circle(screen, color, (320, 200), 40, thickness)
     if chances <= 5: # Body
-        pygame.draw.line(screen, color, (342, 230), (342, 380), 5)
+        pygame.draw.line(screen, color, (320, 240), (320, 360), thickness)
     if chances <= 4: # Left Arm
-        pygame.draw.line(screen, color, (342, 260), (290, 320), 5)
+        pygame.draw.line(screen, color, (320, 270), (270, 320), thickness)
     if chances <= 3: # Right Arm
-        pygame.draw.line(screen, color, (342, 260), (394, 320), 5)
+        pygame.draw.line(screen, color, (320, 270), (370, 320), thickness)
     if chances <= 2: # Left Leg
-        pygame.draw.line(screen, color, (342, 380), (290, 460), 5)
+        pygame.draw.line(screen, color, (320, 360), (270, 440), thickness)
     if chances <= 1: # Right Leg
-        pygame.draw.line(screen, color, (342, 380), (394, 460), 5)
+        pygame.draw.line(screen, color, (320, 360), (370, 440), thickness)
 
-def draw_buttons(guessed_letters):
-    # Virtual Keyboard for Mobile users
+def draw_keyboard(guessed_letters, mouse_pos):
     buttons = []
-    start_x, start_y = 50, 520
-    gap = 10
-    btn_size = 45
+    start_x, start_y = 50, 480
+    radius = 22
+    gap = 12
     
     letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     for i, l in enumerate(letters):
-        x = start_x + (i % 13) * (btn_size + gap)
-        y = start_y + (i // 13) * (btn_size + gap)
+        col = i % 13
+        row = i // 13
+        x = start_x + col * (radius * 2 + gap) + radius
+        y = start_y + row * (radius * 2 + gap) + radius
         
-        rect = pygame.Rect(x, y, btn_size, btn_size)
-        color = GRAY
+        color = BUTTON_COLOR
         if l in guessed_letters:
-            color = BLUE
+            color = (80, 80, 120) # Deactivated color
+        elif (x-mouse_pos[0])**2 + (y-mouse_pos[1])**2 < radius**2:
+            color = BUTTON_HOVER
             
-        pygame.draw.rect(screen, color, rect, border_radius=5)
-        text = KEY_FONT.render(l, True, WHITE if color != GRAY else BLACK)
-        screen.blit(text, (x + (btn_size//2 - text.get_width()//2), y + (btn_size//2 - text.get_height()//2)))
-        buttons.append((rect, l))
+        pygame.draw.circle(screen, color, (x, y), radius)
+        # Letter in white
+        text_color = TEXT_WHITE if l not in guessed_letters else (150, 150, 180)
+        text = KEY_FONT.render(l, True, text_color)
+        screen.blit(text, (x - text.get_width()//2, y - text.get_height()//2))
+        buttons.append(((x, y, radius), l))
     return buttons
 
 async def main():
@@ -90,19 +97,21 @@ async def main():
     clock = pygame.time.Clock()
 
     while True:
-        screen.fill(WHITE)
+        screen.fill(BG_COLOR)
         mouse_pos = pygame.mouse.get_pos()
         
-        # Draw Keyboard
-        kb_buttons = draw_buttons(guessed_letters)
+        # Draw Background Decorative Elements
+        pygame.draw.circle(screen, (35, 35, 75), (WIDTH, 0), 200)
+        pygame.draw.circle(screen, (35, 35, 75), (0, HEIGHT), 150)
 
         # Event handling
+        kb_buttons = draw_keyboard(guessed_letters, mouse_pos)
+        
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
             
-            # Physical Keyboard
             if event.type == pygame.KEYDOWN and not game_over:
                 letter = pygame.key.name(event.key).upper()
                 if len(letter) == 1 and letter.isalpha():
@@ -111,27 +120,23 @@ async def main():
                         if letter not in word:
                             chances -= 1
             
-            # Virtual Keyboard / Mouse Click
             if event.type == pygame.MOUSEBUTTONDOWN and not game_over:
-                for rect, l in kb_buttons:
-                    if rect.collidepoint(mouse_pos):
+                for (x, y, r), l in kb_buttons:
+                    if (x-mouse_pos[0])**2 + (y-mouse_pos[1])**2 < r**2:
                         if l not in guessed_letters:
                             guessed_letters.append(l)
                             if l not in word:
                                 chances -= 1
             
-            # Restart
-            if event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN:
-                if game_over:
-                    # Check for click on Restart Button area or 'R' key
-                    if (event.type == pygame.KEYDOWN and event.key == pygame.K_r) or event.type == pygame.MOUSEBUTTONDOWN:
-                        word = get_word()
-                        guessed_letters = []
-                        chances = 7
-                        game_over = False
-                        won = False
+            if game_over and (event.type == pygame.KEYDOWN or event.type == pygame.MOUSEBUTTONDOWN):
+                if (event.type == pygame.KEYDOWN and event.key == pygame.K_r) or event.type == pygame.MOUSEBUTTONDOWN:
+                    word = get_word()
+                    guessed_letters = []
+                    chances = 7
+                    game_over = False
+                    won = False
 
-        # Logic: Word Display
+        # Logic
         display_word = ""
         for char in word:
             if char in guessed_letters:
@@ -145,35 +150,38 @@ async def main():
         if chances <= 0 and not game_over:
             game_over = True
 
-        # Render Visuals
-        draw_hangman_modern(chances)
+        # Drawing
+        draw_hangman_styled(chances)
 
-        # Render Word with a nice underline effect
-        word_text = WORD_FONT.render(display_word.strip(), True, BLACK)
-        screen.blit(word_text, (400, 250))
+        # Title
+        title_text = TITLE_FONT.render("HANGMAN", True, ACCENT_COLOR)
+        screen.blit(title_text, (WIDTH//2 - title_text.get_width()//2, 30))
 
-        # Render Chances with an Icon-like feel
-        pygame.draw.rect(screen, ORANGE, (600, 40, 160, 50), border_radius=10)
-        chances_text = UI_FONT.render(f"Lives: {chances}", True, WHITE)
-        screen.blit(chances_text, (620, 48))
+        # Word Display
+        word_render = WORD_FONT.render(display_word.strip(), True, TEXT_WHITE)
+        screen.blit(word_render, (420, 220))
+
+        # Lives Indicator
+        lives_label = UI_FONT.render(f"LIVES: {chances}", True, RED_ACCENT if chances < 3 else GREEN_ACCENT)
+        screen.blit(lives_label, (600, 130))
 
         if game_over:
-            # Semi-transparent overlay for Game Over
-            overlay = pygame.Surface((WIDTH, HEIGHT), pygame.SRCALPHA)
-            overlay.fill((255, 255, 255, 200))
-            screen.blit(overlay, (0,0))
+            # Game Over Modal
+            modal_rect = pygame.Rect(WIDTH//2-250, HEIGHT//2-150, 500, 300)
+            pygame.draw.rect(screen, BUTTON_COLOR, modal_rect, border_radius=20)
+            pygame.draw.rect(screen, ACCENT_COLOR, modal_rect, 3, border_radius=20)
 
             if won:
-                msg = TITLE_FONT.render("YOU WON!", True, GREEN)
+                result_text = TITLE_FONT.render("WINNER!", True, GREEN_ACCENT)
             else:
-                msg = TITLE_FONT.render("GAME OVER", True, RED)
-                correct_word = UI_FONT.render(f"The word was: {word}", True, BLACK)
-                screen.blit(correct_word, (WIDTH//2 - correct_word.get_width()//2, 350))
+                result_text = TITLE_FONT.render("LOST!", True, RED_ACCENT)
+                reveal_text = UI_FONT.render(f"WORD: {word}", True, TEXT_WHITE)
+                screen.blit(reveal_text, (WIDTH//2 - reveal_text.get_width()//2, HEIGHT//2))
             
-            screen.blit(msg, (WIDTH//2 - msg.get_width()//2, 200))
-            restart_btn = pygame.draw.rect(screen, BLUE, (WIDTH//2-100, 450, 200, 60), border_radius=15)
-            restart_text = UI_FONT.render("RESTART", True, WHITE)
-            screen.blit(restart_text, (WIDTH//2 - restart_text.get_width()//2, 460))
+            screen.blit(result_text, (WIDTH//2 - result_text.get_width()//2, HEIGHT//2 - 100))
+            
+            restart_msg = UI_FONT.render("TAP TO RESTART", True, ACCENT_COLOR)
+            screen.blit(restart_msg, (WIDTH//2 - restart_msg.get_width()//2, HEIGHT//2 + 80))
 
         pygame.display.update()
         await asyncio.sleep(0)
