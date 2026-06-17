@@ -1,4 +1,4 @@
-# Modern Hangman Game - Python & Pygame
+## Modern Hangman Game - Python & Pygame
 
 A sleek, modern, and interactive **Hangman Game** built with Python and Pygame. This project has been upgraded from a simple CLI tool to a fully functional **Graphical User Interface (GUI)** version that is mobile-responsive and web-ready.
 
